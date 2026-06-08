@@ -1,0 +1,7 @@
+测试通过：输出结果.xlsx 与源文件解析结果一致
+- 下线清单 WWN 数量：148
+- 匹配到 active Zone 的 WWN 数量：148
+- 目标 WWN/VSAN/Zone 组合数量：260
+- Excel 数据行数：1112
+- 标黄非本次下线 Zone Member 行数：616
+- 表头、Fabric/VSAN 映射、Zone Member 明细、说明列和黄色样式均校验通过

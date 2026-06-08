@@ -1,0 +1,15 @@
+编码思路记录
+
+1. 读取 wwn_with_vsan.txt，将每行按最后一个下划线拆分为 WWN 和 VSAN，并统一把 WWN 转为小写；VSAN 5 归入 Fabric A，VSAN 6 归入 Fabric B。
+2. 分别解析两个 Fabric 的 show_fcalias.txt：识别 `fcalias name <别名> vsan <编号>` 块，以及块内的 `pwwn <WWN>`，建立 `(WWN, VSAN) -> fcalias` 映射。
+3. 分别解析两个 Fabric 的 show_zoneset_active.txt：识别 `zone name <Zone> vsan <编号>`，并收集 Zone 内直接 `pwwn ...` 以及 active 输出中 `fcid ... [pwwn ...]` 形式的成员。
+4. 对解析出的 Zone 块按 Fabric、VSAN、Zone 名称和完整成员列表去重，避免同一命令输出重复粘贴时导致结果重复。
+5. 遍历下线清单中的每一个 `(WWN, VSAN)`，查找其 fcalias、所在 Zone，以及该 Zone 的当前全部成员。
+6. 输出 Excel 时，每个目标 WWN 按 Zone 展开；Zone 成员中如果带有 WWN 且该 `(成员WWN, VSAN)` 不在本次下线清单中，则整行标黄，并在“说明”列写入“本次不在提交的WWN列表中，但是和本次下线的WWN有Zone业务”。
+7. 对未在 zoneset active 中找到的下线 WWN，在 Zone 列标注“未在zoneset active中找到”，便于后续人工复核。
+
+本次统计
+- 下线清单 WWN 数量：148
+- 匹配到 active Zone 的 WWN 数量：148
+- 输出的目标 WWN/Zone 关联数量：260
+- 标黄的非本次下线 Zone Member 行数：616
